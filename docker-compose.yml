@@ -1,0 +1,28 @@
+# docker-compose.yml
+# Runs the API and simulator as two connected services.
+# One command starts everything: docker-compose up
+
+version: "3.9"
+
+services:
+
+  # The FastAPI anomaly detection API
+  api:
+    build: .
+    ports:
+      - "8000:8000"       # maps localhost:8000 → container:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # The CPU simulator — waits for API to be healthy before starting
+  simulator:
+    build: .
+    command: python simulator.py --url http://api:8000 --interval 0.5 --points 1000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: "no"         # run once and stop
