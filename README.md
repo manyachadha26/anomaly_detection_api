@@ -102,4 +102,4 @@ curl http://localhost:8000/stats
 
 ---
 
-*Project 2 of my #BuildInPublic challenge — one project every 3 days.*
+
